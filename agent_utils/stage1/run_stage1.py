@@ -18,6 +18,7 @@ from base import ValidationResult
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from provider_config import resolve_chat_config
 
 
 class Stage1Runner:
@@ -40,10 +41,11 @@ class Stage1Runner:
         self.verbose = verbose
 
         # LLM
+        llm_config = resolve_chat_config(model, base_url, api_key)
         self.llm = ChatOpenAI(
-            model=model,
-            base_url=base_url or os.environ.get("SCENEGEN_BASE_URL"),
-            api_key=api_key or os.environ.get("SCENEGEN_API_KEY") or os.environ.get("OPENAI_API_KEY"),
+            model=llm_config["model"],
+            base_url=llm_config["base_url"] or os.environ.get("SCENEGEN_BASE_URL"),
+            api_key=llm_config["api_key"] or os.environ.get("SCENEGEN_API_KEY") or os.environ.get("OPENAI_API_KEY"),
             temperature=0.7,
             timeout=600,
             request_timeout=600,

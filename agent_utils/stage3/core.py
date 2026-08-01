@@ -8,6 +8,11 @@ from typing import Optional, Dict, Any, List, Tuple
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
+try:
+    from provider_config import resolve_chat_config, supports_vision_model
+except ImportError:  # pragma: no cover - package import fallback
+    from agent_utils.provider_config import resolve_chat_config, supports_vision_model
+
 
 class PromptManager:
     """Prompt manager"""
@@ -101,6 +106,10 @@ class LLMClient:
         temperature: float = 0.3
     ):
         model = model or self.DEFAULT_MODEL
+        resolved = resolve_chat_config(model, base_url, api_key)
+        model = resolved["model"] or model
+        base_url = resolved["base_url"]
+        api_key = resolved["api_key"]
 
         # Auto-detect whether this is a native OpenAI model
         is_openai_model = any(model.startswith(m) for m in self.OPENAI_MODELS) or model in self.OPENAI_MODELS
@@ -152,6 +161,8 @@ class LLMClient:
         """Conservative check: text-only mini / text-only reasoning models default to no vision."""
         if not model:
             return True
+        if not supports_vision_model(model):
+            return False
         return not any(model.startswith(p) for p in cls.NON_VISION_MODEL_PREFIXES)
 
     @staticmethod
