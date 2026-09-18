@@ -476,7 +476,7 @@ Important final artifacts:
 - `stage11_texture/images/`: generated texture maps.
 - `stage11_texture/texture_manifest.json`: texture-generation manifest.
 - `stage10_material/material_config.json`: generated material configuration.
-- `stage7_small_objects/small_objects.json`: added small objects and placement data.
+- `stage7_small_objects/small_objects.json`: added small objects and placement data. 
 
 ## License
 
