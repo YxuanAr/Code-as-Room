@@ -34,6 +34,11 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+try:
+    from provider_config import resolve_chat_config
+except ImportError:  # pragma: no cover - package import fallback
+    from agent_utils.provider_config import resolve_chat_config
+
 CURRENT_DIR = Path(__file__).parent.absolute()
 sys.path.insert(0, str(CURRENT_DIR))
 
@@ -198,10 +203,11 @@ def _llm_classify(
         request_timeout=120,
         max_retries=2,
     )
-    if base_url:
-        llm_kwargs["base_url"] = base_url
-    if api_key:
-        llm_kwargs["api_key"] = api_key
+    llm_config = resolve_chat_config(model, base_url, api_key)
+    if llm_config["base_url"]:
+        llm_kwargs["base_url"] = llm_config["base_url"]
+    if llm_config["api_key"]:
+        llm_kwargs["api_key"] = llm_config["api_key"]
 
     try:
         llm = ChatOpenAI(**llm_kwargs)
