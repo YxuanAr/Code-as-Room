@@ -6,9 +6,21 @@ from typing import Any, Dict, Optional
 
 MINIMAX_PROVIDER: Dict[str, Any] = {
     "name": "MiniMax",
-    "model_id": "MiniMax-M3",
-    "model_ids": ["MiniMax-M3", "MiniMax-M2.7"],
+    "model_id": "MiniMax-M3.1-Flash",
+    "model_ids": ["MiniMax-M3.1-Flash", "MiniMax-M3"],
+    # Keep legacy metadata for explicit saved model IDs, outside ordinary choices.
     "models": {
+        "MiniMax-M3.1-Flash": {
+            "context_window": 1000000,
+            "pricing_usd_per_million_tokens": {
+                "input": 0.15,
+                "output": 0.6,
+                "cache_read": 0.015,
+                "cache_write": None,
+            },
+            "input_modalities": ["text", "image", "video"],
+            "thinking": ["adaptive"],
+        },
         "MiniMax-M3": {
             "context_window": 1000000,
             "pricing_usd_per_million_tokens": {
@@ -52,7 +64,7 @@ def get_minimax_provider_config() -> Dict[str, Any]:
 
 
 def is_minimax_model(model: Optional[str]) -> bool:
-    return bool(model) and model in MINIMAX_PROVIDER["model_ids"]
+    return bool(model) and model in MINIMAX_PROVIDER["models"]
 
 
 def _minimax_region() -> str:
