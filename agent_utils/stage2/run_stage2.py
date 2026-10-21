@@ -59,7 +59,6 @@ from base import ValidationResult
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from provider_config import resolve_chat_config
 
 
 # ============================================================
@@ -923,11 +922,10 @@ class Stage2Runner:
         self.max_iterations = max_iterations
         self.verbose = verbose
 
-        llm_config = resolve_chat_config(model, base_url, api_key)
         self.llm = ChatOpenAI(
-            model=llm_config["model"],
-            base_url=llm_config["base_url"],
-            api_key=llm_config["api_key"],
+            model=model,
+            base_url=base_url,
+            api_key=api_key,
             temperature=1,
             max_tokens=max_tokens,
             timeout=600,
